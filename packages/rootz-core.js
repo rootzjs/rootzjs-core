@@ -17,9 +17,11 @@ import {
 
 logger(logType.bra, `%cUse Rootz DevTools for better debugging experience: https://devtools.rootzjs.org`);
 
+// performance measure empty object for test
+window.performance.measure = window.performance.measure || function () { };
+
 let bus = {};
 const store = {};
-const perf = window.performance;
 const setImmutableObject = (state, newState) => Object.assign({}, state, newState);
 const setImmutableArray = (state, newState) => [...state, ...newState];
 const requestUpdate = function (id) {
@@ -37,9 +39,6 @@ const addProfile = function (state) {
 const now = id => performance.measure(id);
 const getAllNodes = function () { return store };
 const getProfile = function () { return bus };
-
-// performance measure empty object for test
-perf.measure = perf.measure || function () { }
 
 now("@@APP_INIT");
 
