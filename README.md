@@ -1,4 +1,4 @@
-# <img src='https://raw.githubusercontent.com/rootzjs/rootzjs-core/master/assets/images/logo-avg.png?token=AFKLJS4EB5PRWS3WAF4YU6C72PP4U' height="35px" alt='Rootz JS' /> Rootz JS
+# <img src='https://raw.githubusercontent.com/rootzjs/rootzjs-core/master/assets/images/logo-avg.png?token=AFKLJS4EB5PRWS3WAF4YU6C72PP4U' height="40px" alt='Rootz JS' />  Rootz JS
 
 Rootz JS, is an open source JavaScript Library for maintaining application state.
 
@@ -222,7 +222,7 @@ node.defineState({
 
 // create action for updating the state on btn click
 node.createAction(
-	"ADD_MESSAGE", 
+    "ADD_MESSAGE", 
     { 
     	message: "Yay! I just created my first Action" 
     }
@@ -239,9 +239,9 @@ This is similar to createAction method with function as a parameter. A Callback 
 
 node.createActionCallback(
 	"ADD_MESSAGE", 
-    () => ({ 
-    	message: "Yay! I just created my first Action Callback" 
-    })
+	() => ({ 
+	message: "Yay! I just created my first Action Callback" 
+	})
 );
 
 ```
@@ -301,11 +301,11 @@ const [node, dispatchNode] = createNode("NodeB", ({
 });
 
 node.createContract(
-	"NodeA",
-	"ADD_MESSAGE", 
-    { 
-    	message: "Yay! I just created my first Contract" 
-    }
+    	"NodeA",
+    	"ADD_MESSAGE", 
+	{ 
+	message: "Yay! I just created my first Contract" 
+	}
 );
 
 export const NodeB = dispatchNode(node);
@@ -320,9 +320,9 @@ The same goes for the createContractCallback.
 node.createContractCallback(
 	"NodeA",
 	"ADD_MESSAGE", 
-    () => ({ 
-    	message: "Yay! I just created my first Contract Callback" 
-    })
+	() => ({ 
+	message: "Yay! I just created my first Contract Callback" 
+	})
 );
 
 ```
@@ -352,7 +352,7 @@ const [node, dispatchNode] = createNode("MyFirstNode", ({
     profile, // Application Profile can be accessed here
 }) => {
     return (
-        <p>{state.message}</p>
+	<p>{state.message}</p>
     )
 });
 ```
@@ -372,12 +372,12 @@ const sessionId = getProfile()["sessionId "];
 To all those who have inspired me to come up with a new JavaScript state management tool.
 
 #### Key Inspiration 
-**I came across a very famous Restuarant, visited by more than 4.8 Million every week. When I personally visited that place I found as if I had to cook my own food, with so many procedures to be followed, even for a simple task of drinking water ;)**
+I came across a very famous Restuarant, visited by more than 4.8 Million every week. When I personally visited that place I found as if I had to cook my own food, with so many procedures to be followed, even for a simple task of drinking water ;)
 
 **This struck me, and became an inspiration for Rootz JS**.
 
 #### But Why Rootz?
-**We donot expect you to cook when you visit our Restuarant. Just let us know what will you have and we would habdle the rest. FYI feel free to drink as much water you want. You donot have to even mention about it. :D** 
+We donot expect you to cook when you visit our Restuarant. Just let us know what will you have and we would handle the rest. FYI feel free to drink as much water you want. You donot have to even mention about it. :D
 
 ## License
 ISC
