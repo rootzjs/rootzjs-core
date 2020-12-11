@@ -1,4 +1,4 @@
-# <img src='https://raw.githubusercontent.com/rootzjs/rootzjs-core/master/assets/images/logo-avg.png?token=AFKLJS4EB5PRWS3WAF4YU6C72PP4U' height="40px" alt='Rootz JS' />  Rootz JS
+# <img src='https://raw.githubusercontent.com/rootzjs/rootzjs-core/master/assets/images/logo-avg.png?token=AFKLJS46OOEKDTJIV4G4SWS72PRGK' height="40px" alt='Rootz JS' />  Rootz JS
 
 Rootz JS, is an open source JavaScript Library for maintaining application state.
 
