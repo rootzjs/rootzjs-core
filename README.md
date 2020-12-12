@@ -1,5 +1,13 @@
 # <img src='https://user-images.githubusercontent.com/22328523/101976830-2a152f80-3c6f-11eb-9a73-87e7bcc32a2a.png' height="100px" alt='Rootz JS' />
 
+[![build status](https://img.shields.io/travis/com/rootzjs/rootzjs-core?style=flat-square)](https://travis-ci.com/rootzjs/rootzjs-core)
+[![npm version](https://img.shields.io/npm/v/@rootzjs/core?style=flat-square)](https://www.npmjs.com/package/@rootzjs/core)
+[![npm downloads](https://img.shields.io/npm/dt/@rootzjs/core?style=flat-square)](https://www.npmjs.com/package/@rootzjs/core)
+[![git search](https://img.shields.io/github/search/rootzjs/rootzjs-core/rootz?style=flat-square)](https://github.com/rootzjs/rootzjs-core)
+[![licence](https://img.shields.io/github/license/rootzjs/rootzjs-core?style=flat-square)](https://www.npmjs.com/package/@rootzjs/core)
+[![package size](https://img.shields.io/bundlephobia/minzip/@rootzjs/core?style=flat-square)](https://www.npmjs.com/package/@rootzjs/core)
+[![last commit](https://img.shields.io/github/last-commit/rootzjs/rootzjs-core?style=flat-square)](https://github.com/rootzjs/rootzjs-core/graphs/commit-activity)
+
 Rootz JS, is an open source JavaScript Library for maintaining application state.
 
 It makes it easy to manage the state of your application. Another way of looking at this is, it helps you manage the data you display and how you respond to user actions. It helps you to view your application state as a whole at any point during application run. 
