@@ -1,24 +1,36 @@
 {
     "name": "@rootzjs/core",
     "version": "2.0.19",
-    "description": "modern state management tool for react application",
+    "description": "A Modern state management tool for react application",
     "main": "./packages/rootz-core.min.js",
     "scripts": {
         "test": "jest",
-        "babelpack": "/usr/local/lib/node_modules/babel-cli/bin/babel.js lib -d temp --copy-files"
+        "test:watch": "npm test -- --watch",
+        "test:cov": "npm test -- --coverage",
+        "webpack": "webpack --config webpack.config.js",
+        "lint": "eslint --fix \"{src, tests}/**/*.{js,jsx}\"",
+        "format": "prettier --write \"{src, test}/**/*.{js,jsx}\"",
+        "format:check": "prettier --list-different \"{src, tests}/**/*.{js,jsx}\"",
+        "prepublishOnly": "npm run lint && npm test",
+        "babelpack": "babel src -d dist --copy-files"
     },
     "repository": {
         "type": "git",
         "url": "git+https://github.com/rootzjs/rootzjs-core.git"
     },
     "keywords": [
+        "hot",
+        "flux",
+        "live",
         "rootz",
         "state",
         "rootzjs",
-        "react-state",
-        "state-management"
+        "rootz app",
+        "react state",
+        "rootz devtools",
+        "state management"
     ],
-    "author": "trishanth naidu",
+    "author": "Trishanth Naidu <rootzjs@icould.com> (https://github.com/trishanthnaidu)",
     "license": "ISC",
     "bugs": {
         "url": "https://github.com/rootzjs/rootzjs-core/issues"
@@ -29,6 +41,7 @@
     "homepage": "https://github.com/rootzjs/rootzjs-core#readme",
     "devDependencies": {
         "@babel/plugin-proposal-export-default-from": "^7.12.1",
+        "@babel/plugin-transform-react-jsx": "^7.12.10",
         "@babel/plugin-transform-runtime": "^7.12.1",
         "@babel/preset-env": "^7.7.6",
         "@babel/preset-react": "^7.7.4",
@@ -36,25 +49,27 @@
         "@rootzjs/core": "^2.0.13",
         "@testing-library/jest-dom": "^4.2.4",
         "@testing-library/react": "^9.3.2",
-        "babel-eslint": "^10.0.3",
         "babel-jest": "^24.9.0",
         "enzyme": "^3.11.0",
         "enzyme-adapter-react-16": "^1.15.5",
-        "eslint": "^6.7.2",
+        "eslint": "^6.8.0",
+        "eslint-config-prettier": "^6.15.0",
         "eslint-config-react-app": "^5.1.0",
         "eslint-plugin-flowtype": "^4.5.2",
-        "eslint-plugin-import": "^2.18.2",
-        "eslint-plugin-jsx-a11y": "^6.2.3",
-        "eslint-plugin-prettier": "^3.1.1",
-        "eslint-plugin-react": "^7.17.0",
-        "eslint-plugin-react-hooks": "^2.3.0",
+        "eslint-plugin-import": "^2.22.1",
+        "eslint-plugin-jsx-a11y": "^6.4.1",
+        "eslint-plugin-prettier": "^3.2.0",
+        "eslint-plugin-react": "^7.21.5",
+        "eslint-plugin-react-hooks": "^2.5.1",
         "jest": "^24.9.0",
-        "perf_hooks": "0.0.1",
         "prettier": "^1.19.1",
         "react": "^16.12.0",
         "react-dom": "^16.12.0",
         "react-scripts": "^3.2.0",
         "react-test-renderer": "^16.12.0",
-        "web-vitals": "^1.0.1"
+        "terser-webpack-plugin": "^5.0.3",
+        "web-vitals": "^1.0.1",
+        "webpack": "^5.10.1",
+        "webpack-cli": "^4.2.0"
     }
 }

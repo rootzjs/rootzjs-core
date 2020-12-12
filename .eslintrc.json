@@ -1,0 +1,68 @@
+{
+        "env": {
+                "browser": true,
+                "commonjs": true,
+                "es6": true,
+                "node": true
+        },
+        "extends": [
+                "eslint:recommended",
+                "plugin:react/recommended",
+                "plugin:import/errors"
+        ],
+        "parser": "babel-eslint",
+        "parserOptions": {
+                "ecmaVersion": 6,
+                "sourceType": "module",
+                "allowImportExportEverywhere": true,
+                "ecmaFeatures": {
+                        "jsx": true,
+                        "modules": true,
+                        "experimentalObjectRestSpread": true
+                }
+        },
+        "plugins": [
+                "react"
+        ],
+        "rules": {
+                "semi": [
+                        "error",
+                        "always"
+                ],
+                "react/display-name": [
+                        0,
+                        {
+                                "ignoreTranspilerName": true
+                        }
+                ],
+                "no-console": "off",
+                "no-undef": "error",
+                "react/jsx-no-bind": [
+                        "error",
+                        {
+                                "allowArrowFunctions": true,
+                                "allowBind": false,
+                                "ignoreRefs": true
+                        }
+                ],
+                "react/no-did-update-set-state": "error",
+                "react/no-unknown-property": "error",
+                "react/no-unused-prop-types": "error",
+                "react/prop-types": "error",
+                "react/react-in-jsx-scope": "error"
+        },
+        "settings": {
+                "react": {
+                        "pragma": "React",
+                        "version": "latest"
+                },
+                "import/resolver": {
+                        "node": {
+                                "extensions": [
+                                        ".js",
+                                        ".jsx"
+                                ]
+                        }
+                }
+        }
+}
