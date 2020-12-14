@@ -14,6 +14,9 @@ import React from "react";
 window.performance.measure = window.performance.measure || function () { };
 
 let bus = {};
+let logMap;
+let logger;
+let logType;
 const store = {};
 const isDev = process.env.NODE_ENV === "development";
 const now = id => performance.measure(id);
@@ -31,7 +34,9 @@ now("@@APP_INIT");
 // Dynamic import of modules based on Env
 if (isDev) {
         import("./logs").then(module => {
-                const { logMap, logger, logType } = module;
+                logMap = module.logMap;
+                logger = module.logger;
+                logType = module.logType;
                 logger(
                         logType.bra,
                         `%cUse Rootz DevTools for better debugging experience: https://devtools.rootzjs.org`
@@ -163,7 +168,7 @@ const dispatchNode = ({ id, actions, contract, Component }) => {
                                 />
                         );
                 }
-        }
+        };
         return C[id];
 };
 
