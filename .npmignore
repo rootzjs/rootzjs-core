@@ -1,11 +1,11 @@
 
+src
 tests
+packages
 .babelrc
 .gitignore
 node_modules
 setupTests.js
 jest.config.js
 reportWebVitals
-packages/logs.js
 package-lock.json
-packages/rootz-core.js

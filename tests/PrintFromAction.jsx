@@ -1,5 +1,5 @@
 import React from 'react';
-import { createNode } from '../src/rootz-core';
+import { createNode } from '../dist/rootz-core.min.js';
 
 // Test to Print a text "Hello" without state
 const [node, dispatchNode] =
@@ -17,7 +17,7 @@ const [node, dispatchNode] =
                         )
                 }
         );
-node.defineState({ text: null });
-node.createAction("ON_CLICK", { text: "Hello" });
+node.state({ text: null });
+node.useAction("ON_CLICK", { text: "Hello" });
 
 export const PrintFromAction = dispatchNode(node);

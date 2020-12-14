@@ -1,0 +1,90 @@
+.todo-list-container {
+        height: 70vmin;
+        margin: 15px 0;
+        overflow-y: auto;
+        background-color: #FFF;
+        box-shadow: 0px 1px 7px 7px rgba(0, 0, 0, 0.05);
+}
+
+.todos-list {
+        height: 70px;
+        display: flex;
+        font-size: 20px;
+        padding: 0 25px;
+        user-select: none;
+        align-items: center;
+        border-bottom: solid 1px #ECF0F3;
+}
+
+.todos-list:hover {
+        background-color: #ECF0F3;
+}
+
+.todo {
+        flex: 1;
+        display: flex;
+        height: inherit;
+        cursor: pointer;
+        font-size: 20px;
+        color: #546A7B;
+        align-items: center;
+}
+
+.todo-completed {
+        color: #90A2AF;
+}
+
+.todo input {
+        flex: 1;
+        width: 0;
+        height: 0;
+        opacity: 0;
+        cursor: pointer;
+}
+
+.checkmark {
+        top: 0;
+        left: 0;
+        width: 30px;
+        height: 30px;
+        position: relative;
+        background-color: #E2E5E7;
+}
+
+.todo:hover input~.checkmark {
+        background-color: #00B5CC30;
+}
+
+.todo input:checked~.checkmark {
+        background-color: #00B5CC;
+}
+
+.checkmark:after {
+        content: "";
+        display: none;
+        position: relative;
+}
+
+.todo input:checked~.checkmark:after {
+        display: block;
+}
+
+.todo .checkmark:after {
+        top: 4px;
+        width: 5px;
+        left: 12px;
+        height: 15px;
+        border: solid white;
+        transform: rotate(45deg);
+        border-width: 0 3px 3px 0;
+        -ms-transform: rotate(45deg);
+        -webkit-transform: rotate(45deg);
+}
+
+.todo-empty-message {
+        display: flex;
+        height: inherit;
+        color: #546A7B;
+        align-items: center;
+        justify-content: center;
+}

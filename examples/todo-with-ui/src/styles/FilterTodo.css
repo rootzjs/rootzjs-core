@@ -1,0 +1,8 @@
+.filter-todo-container {
+        display: flex;
+        background-color: #6B7E8D;
+        box-shadow: 0px 1px 7px 7px rgba(0, 0, 0, 0.05);
+}
+.btn-selected {
+        background-color: #546A7B;
+}

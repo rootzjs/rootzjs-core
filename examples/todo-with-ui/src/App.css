@@ -1,0 +1,51 @@
+* {
+    box-sizing: border-box;
+}
+
+button {
+    width: 25%;
+    border: none;
+    height: 7vmin;
+    color: #FFF;
+    font-size: 25px;
+    flex-basis: 100%;
+    background-color: #6B7E8D;
+}
+
+button:focus {
+    outline: none;
+}
+
+button:hover {
+    background-color: #546A7B90;
+}
+
+input[type="checkbox"]:focus {
+    outline: none;
+    background-color: #6B7E8D;
+}
+
+::placeholder {
+    color: #A5B0B9;
+}
+
+:-ms-input-placeholder {
+    color: #A5B0B9;
+}
+
+::-ms-input-placeholder {
+    color: #A5B0B9;
+}
+
+.todo-root {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #E2E5E7;
+}
+
+.todo-container {
+    width: 80vmin;
+}

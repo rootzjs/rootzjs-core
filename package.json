@@ -1,8 +1,8 @@
 {
     "name": "@rootzjs/core",
-    "version": "2.0.19",
+    "version": "2.0.21",
     "description": "A Modern state management tool for react application",
-    "main": "./packages/rootz-core.min.js",
+    "main": "./dist/rootz-core.min.js",
     "scripts": {
         "test": "jest",
         "test:watch": "npm test -- --watch",
@@ -12,7 +12,7 @@
         "format": "prettier --write \"{src, test}/**/*.{js,jsx}\"",
         "format:check": "prettier --list-different \"{src, tests}/**/*.{js,jsx}\"",
         "prepublishOnly": "npm run lint && npm test",
-        "babelpack": "babel src -d dist --copy-files"
+        "babelpack": "babel src/rootz-core.js -d dist --copy-files"
     },
     "repository": {
         "type": "git",
@@ -50,6 +50,7 @@
         "@testing-library/jest-dom": "^4.2.4",
         "@testing-library/react": "^9.3.2",
         "babel-jest": "^24.9.0",
+        "babel-plugin-minify-mangle-names": "^0.5.0",
         "enzyme": "^3.11.0",
         "enzyme-adapter-react-16": "^1.15.5",
         "eslint": "^6.8.0",

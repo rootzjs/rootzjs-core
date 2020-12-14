@@ -53,41 +53,6 @@ There are four key elements which one needs to be aware of for implementing Root
 - Contract is an agreement made to update the state of any Node in the Application, accept the one in which it is defined (*for which we have Actions*).
 - Contract is an Action by nature, with an only difference; that it updates the state of other Nodes.
 
-
-## The Core Principles
-
-The nature of Rootz can be defined with the help of these Core Principles
-
-#### 1. A Root is the only source of truth.
-State of each Node defines the state of the Root, hence defining the current state of your application. This makes it easy to maintain state in multiple component applications.
-
-#### 2. A stateful component is a Node.
-A stateful component in a Rootz application should be a Node. This makes it a part of the application Root, providing it access to the other Nodes and their state.
-
-#### 3. State of a Node can only be updated through Actions or Contract.
-The only way to change the application state is through Actions or Contract.
-
-#### 4. Actions or Contract should only be created with the helper Methods provided by the instance of a Node.
-The helper methods are an inbuilt functionalities which provides a boilerplate to create Actions or Contract. This is so, because they are pushed as a property to a Node during the runtime.
-
-## Our Philosophy
-
-**It is not mandatory, but a good practice**
-
-We use a **Define first use later** and **Bits and Pieces**  philosophy in our application design. Roots JS too is built on the very same philosophy. Think of it as designing an automobile (*a car or a motorcycle*). You would first define the purpose of building one. Later divide the task of defining the Shape, Materials and other properties based on your initial decisions into smaller bits and pieces. And finally work over them and integrate. 
-
-Similarly, this philosophy goes great with all the fundamentals of Development. In Rootz we intend to follow it for better results.  
-
-- First define the structure of your application. 
-- Break application functionalities into smaller modules. 
-- Define which modules would be a Node.
-- Define relation between the Nodes.
-- Define Actions within Nodes.
-- Define Contract based on the relation between Nodes.
-
-These steps are not mandatory to follow, but following them would surely help in building an application with loosely-coupled components reducing maintainability efforts and faster extendability of functionalities.
-
-
 ## Installation
 
 Official Rootz JS template for [Create React App](https://github.com/facebook/create-react-app)
@@ -155,7 +120,7 @@ export const MyFirstNode = dispatchNode(node);
 Parameters which are passed by the parent (*Caller*) Component / Node.
 
 ##### state
-The state object which you have defined using **node.defineState** method.
+The state object which you have defined using **node.state** method.
 
 ##### actions
 Actions can be created using methods defined in node object. Same goes with contract. (*explained in later sections*).
@@ -167,7 +132,7 @@ Profile are simply an utilization of the concept of Context in React. It helps i
 
 ### State
 
-A State is a simple JavaScript Object. You need to define the state to access it inside the Component. The method **defineState** takes an Object as a parameter.
+A State is a simple JavaScript Object. You need to define the state to access it inside the Component. The method **state** takes an Object as a parameter.
 
 ```js
 import { createNode } from '@rootzjs/core';
@@ -181,7 +146,7 @@ const [node, dispatchNode] = createNode("MyFirstNode", ({
 });
 
 // Defining the State of a Node
-node.defineState({
+node.state({
 	message: "Yay! I just created my first Node State"
 });
 
@@ -192,16 +157,17 @@ export const MyFirstNode = dispatchNode(node);
 
 Actions are functions which returns Objects. The returned object signifies a newer state which will be merged to the existing state of the application. 
 
-Node provides methods to create Actions **createAction** and **createActionCallback** 
+Node provides methods to create Actions **useAction**, **useActionCallback**, **useActionWith**
 
-#### createAction
+#### useAction
 This takes ACTION_ID and an Object or function as a parameter. 
 
 ##### A Pure Action
-In case the parameter is passed as an Object, Rootz creates a function with the name ACTION_ID. This function can then be accessed within the Component by property **actions** of NodeProps. This is normally done when a user does not have any parameters to be passed to the action. A Pure Action.
+In case the parameter is passed as an Object, Rootz creates a function with the name ACTION_ID. This function can then be accessed within the Component with property **actions** of NodeProps. A Pure Action.
 
 ##### A Callback Action
 If a function is passed as a parameter, the same can then be accessed within the Component by property **actions** of NodeProps with the name defined in ACTION_ID.
+The callback provides the state of the Node as the first argument, followed by the array of props passed.
 
 ```js
 import { createNode } from '@rootzjs/core';
@@ -224,12 +190,12 @@ const [node, dispatchNode] = createNode("MyFirstNode", ({
     )
 });
 
-node.defineState({ 
+node.state({ 
 	message: null 
 });
 
 // create action for updating the state on btn click
-node.createAction(
+node.useAction(
     "ADD_MESSAGE", 
     { 
     	message: "Yay! I just created my first Action" 
@@ -239,34 +205,57 @@ node.createAction(
 export const MyFirstNode = dispatchNode(node);
 ```
 
-#### createActionCallback
-This is similar to createAction method with function as a parameter. A Callback Action.
+#### useActionCallback
+This is similar to useAction method with function as a parameter. A Callback Action.
 
 ```js
-...
+import { createNode } from '@rootzjs/core';
 
-node.createActionCallback(
+const [node, dispatchNode] = createNode("MyFirstNode", ({
+    state,
+    actions,
+}) => {
+	return (
+    	<React.Fragment>
+        	{
+            	state.message ?
+	            	<p>{state.message}</p>
+                    :
+                    <p>No Message to display</p>
+        	}
+            <button onClick={() => actions.ADD_MESSAGE("Action", "Callback")}>Add Message</button>
+        </React.Fragment>
+	    
+    )
+});
+
+node.state({ 
+	message: null 
+});
+
+node.useActionCallback(
 	"ADD_MESSAGE", 
-	() => ({ 
-	message: "Yay! I just created my first Action Callback" 
+	(state, [text1, text2]) => ({ 
+		message: `Yay! I just created my first ${text1} ${text2}`
 	})
 );
 
+export const MyFirstNode = dispatchNode(node);
 ```
-
+The **state** represents the current state of the Node MyFirstNode. followed by the props passed.
 ### Contract
 
 An Action updates the state of the node within its scope. What if you want to update any other Node, which is currently not within the scope in which the action is defined. Here comes the concept of a **Contract**. 
 
 A Contract is an agreement made with an Action to update a particular Node.
 
-Node provides methods to create Contract **createContract** and **createContractCallback**.
+Node provides methods to create Contract **useContract** and **useContractCallback**.
 
-#### createContract 
+#### useContract 
 Is a pure Action which takes 3 parameters, forNode which states which Node to be updated, ACTION_ID and an Object or a function.
 
-#### createContractCallback 
-similarly createContractCallback takes forNode and a function as a parameter.
+#### useContractCallback 
+similarly useContractCallback takes forNode and a function as a parameter. The callback provides the state of the **target** Node as the first argument, followed by the array of props passed.
 
 ###### NodeA.js
 ```js
@@ -286,7 +275,7 @@ const [node, dispatchNode] = createNode("NodeA", ({
     }
 });
 
-node.defineState({ 
+node.state({ 
 	message: null 
 });
 
@@ -296,7 +285,7 @@ In the above example I have created a Node as **NodeA** which has a state variab
 
 Let's create a Node as **NodeB** which would have a Contract made with NodeA to update the message variable.
 
-###### NodeB.js
+###### NodeB.js (with useContract)
 ```js
 import { createNode } from '@rootzjs/core';
 
@@ -308,11 +297,11 @@ const [node, dispatchNode] = createNode("NodeB", ({
         )
 });
 
-node.createContract(
-    	"NodeA",
-    	"ADD_MESSAGE", 
+node.useContract(
+    "NodeA",
+    "ADD_MESSAGE", 
 	{ 
-	message: "Yay! I just created my first Contract" 
+		message: "Yay! I just created my first Contract" 
 	}
 );
 
@@ -321,31 +310,63 @@ export const NodeB = dispatchNode(node);
 Now when the user clicks on the Add Message button, action ADD_MESSAGE will be called. The existing state of NodeA will be updated with the new state. Thus printing the message "Yay! I just created my first Contract".
 
 
-The same goes for the createContractCallback.
+The same goes for the useContractCallback.
+###### NodeB.js (with useContractCallback)
 ```js
-...
+import { createNode } from '@rootzjs/core';
 
-node.createContractCallback(
+const [node, dispatchNode] = createNode("NodeB", ({
+    actions
+}) => {
+    	return (
+        	<button onClick={() => actions.ADD_MESSAGE("Contract", "Callback")}>Add Message</button>
+        )
+});
+
+node.useContractCallback(
 	"NodeA",
 	"ADD_MESSAGE", 
-	() => ({ 
-	message: "Yay! I just created my first Contract Callback" 
+	(state, [text1, text2]) => ({ 
+		message: `Yay! I just created my first ${text1} ${text2}`
 	})
 );
 
+export const NodeB = dispatchNode(node);
+
 ```
+In the above example **NodeB.js (with useContractCallback)** the first argument **state** will represent the current state of **NodeA.js**, followed by the list of parameters passed by the action ADD_MESSAGE.
 
 ### Profile
 Profile is similar to the concept of Bus in Networks. It helps you to store application specific generic data which could be accessible at any point within the application execution.
 
-You can add data to profile by **addProfile(Object)** method. addProfile takes an Object as a parameter.
+You can add data to profile by **setProfile(Object)** method. setProfile takes an Object as a parameter. Profiles can be set through various means.
 
 ```js
-import { addProfile } from '@rootzjs/core';
+import { createNode } from '@rootzjs/core';
+
+const [node, dispatchNode] = createNode("MyFirstNode", ({
+    profile
+}) => {
+    	return (
+        	 {YOUR JSX ELEMENTS GOES HERE}
+        )
+});
+
+node.setProfile({
+	sessionId: "9694dca333f01433ecb179d32251c946"
+});
+
+export const MyFirstNode = dispatchNode(node);
+```
+
+> **Note**: The profile if set through the node method (**node.setProfile**) can be accessed throughout the component irrespective to where it has been set. While in case of setProfile method imported as mentioned below should be set before the other components tries to fetch it.
+
+```js
+import { setProfile } from '@rootzjs/core';
 ...
 
 // storing a sessionId in the profile
-addProfile({
+setProfile({
 	sessionId: "9694dca333f01433ecb179d32251c946"
 });
 ```
@@ -360,7 +381,7 @@ const [node, dispatchNode] = createNode("MyFirstNode", ({
     profile, // Application Profile can be accessed here
 }) => {
     return (
-	<p>{state.message}</p>
+		<p>{state.message}</p>
     )
 });
 ```

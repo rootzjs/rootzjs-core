@@ -5,21 +5,21 @@ const TerserPlugin = require("terser-webpack-plugin");
 module.exports = (env, options) => {
         return {
                 mode: "production",
-                entry: './src/rootz-core.js',
+                entry: './packages/rootz-core.js',
                 externals: [
                         {
                                 react: {
                                         root: 'React',
-                                        commonjs2: './react',
-                                        commonjs: ['./react'],
+                                        commonjs2: 'react',
+                                        commonjs: ['react'],
                                         amd: 'react',
                                 },
                         },
                         {
                                 'react-dom': {
                                         root: 'ReactDOM',
-                                        commonjs2: './react-dom',
-                                        commonjs: ['./react-dom'],
+                                        commonjs2: 'react-dom',
+                                        commonjs: ['react-dom'],
                                         amd: 'react-dom',
                                 },
                         },
@@ -36,7 +36,11 @@ module.exports = (env, options) => {
                                                         "@babel/preset-react"
                                                 ],
                                                 plugins: [
-                                                        "@babel/plugin-transform-react-jsx"
+                                                        "minify-mangle-names",
+                                                        "@babel/plugin-transform-react-jsx",
+                                                        "@babel/plugin-syntax-dynamic-import",
+                                                        "@babel/plugin-proposal-class-properties",
+                                                        "@babel/plugin-proposal-export-default-from"
                                                 ]
                                         }
                                 },
@@ -54,6 +58,9 @@ module.exports = (env, options) => {
                         libraryTarget: 'umd',   // Important
                         umdNamedDefine: true,   // Important
                         globalObject: "typeof self !== 'undefined' ? self : this"
+                },
+                optimization: {
+                        minimize: false,   
                 },
         }
 }
