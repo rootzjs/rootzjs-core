@@ -8,8 +8,15 @@
         border: none;
         height: 7vmin;
         outline: none;
-        font-size: 25px;
+        font-size: 3vmin;
         color: #FFFFFF;
         padding: 7px 15px;
         background-color: #ffffff15;
+}
+
+@media only screen and (max-width: 600px) {
+        .add-todo-input {
+                height: 12vmin;
+                font-size: 4.5vmin;
+        }
 }

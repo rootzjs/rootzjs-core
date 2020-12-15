@@ -2,12 +2,18 @@
     box-sizing: border-box;
 }
 
+body {
+    height: 100%;
+    overflow: hidden;
+    background-color: #E2E5E7;
+}
+
 button {
     width: 25%;
     border: none;
     height: 7vmin;
     color: #FFF;
-    font-size: 25px;
+    font-size: 2.5vmin;
     flex-basis: 100%;
     background-color: #6B7E8D;
 }
@@ -38,14 +44,28 @@ input[type="checkbox"]:focus {
 }
 
 .todo-root {
+    overflow-y: hidden;
     width: 100vw;
     height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #E2E5E7;
 }
 
 .todo-container {
     width: 80vmin;
+}
+
+@media only screen and (max-width: 600px) {
+    .todo-root {
+        height: 85vh;
+    }
+
+    .todo-container {
+        width: 90vmin;
+    }
+    button {
+        height: 12vmin;
+        font-size: 4.5vmin;
+    }
 }

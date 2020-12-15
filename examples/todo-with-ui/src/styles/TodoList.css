@@ -25,7 +25,7 @@
         display: flex;
         height: inherit;
         cursor: pointer;
-        font-size: 20px;
+        font-size: 3vmin;
         color: #546A7B;
         align-items: center;
 }
@@ -87,4 +87,15 @@
         color: #546A7B;
         align-items: center;
         justify-content: center;
+}
+
+@media only screen and (max-width: 600px) {
+        .todo-list-container {
+                height: 60vh;
+                margin: 7px 0;
+        }
+        .todo {
+                font-size: 4.5vmin;
+                color: #546A7B;
+        }
 }
