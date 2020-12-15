@@ -12,6 +12,7 @@
         "format": "prettier --write \"{src, test}/**/*.{js,jsx}\"",
         "format:check": "prettier --list-different \"{src, tests}/**/*.{js,jsx}\"",
         "prepublishOnly": "npm run lint && npm test",
+        "pre-comit": "npm run prepublishOnly",
         "babelpack": "babel src/rootz-core.js -d dist --copy-files"
     },
     "repository": {
