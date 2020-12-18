@@ -1,6 +1,6 @@
 {
     "name": "@rootzjs/core",
-    "version": "2.0.21",
+    "version": "2.0.22",
     "description": "A Modern state management tool for react application",
     "main": "./dist/rootz-core.min.js",
     "scripts": {
