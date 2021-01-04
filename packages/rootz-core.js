@@ -1,6 +1,6 @@
-/** @license RootzJs v2.0.20
+/** @license RootzJs v2.0.23
  ** @author Trishanth Naidu
- ** @github https://github.com/rootzjs/core v2.0.20
+ ** @github https://github.com/rootzjs/core v2.0.23
  * react-jsx-dev-runtime.development.js
  * Copyright 2019 Trishanth Naidu
  * Copyright (c) Rootz Js,and its affiliates.
@@ -19,6 +19,8 @@ var _react = _interopRequireDefault(require("react"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
@@ -27,6 +29,9 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 window.performance.measure = window.performance.measure || function () { };
 
 let bus = {};
+let logMap;
+let logger;
+let logType;
 const store = {};
 const isDev = process.env.NODE_ENV === "development";
 
@@ -48,12 +53,54 @@ now("@@APP_INIT"); // Dynamic import of modules based on Env
 
 if (isDev) {
         Promise.resolve().then(() => _interopRequireWildcard(require("./logs"))).then(module => {
-                const {
-                        logMap,
-                        logger,
-                        logType
-                } = module;
+                logMap = module.logMap;
+                logger = module.logger;
+                logType = module.logType;
                 logger(logType.bra, `%cUse Rootz DevTools for better debugging experience: https://devtools.rootzjs.org`);
+        });
+        Promise.resolve().then(() => _interopRequireWildcard(require("prop-types"))).then(module => {
+                const {
+                        PropTypes
+                } = module;
+                /**
+                 * Type Definitions for Dev only
+                 */
+
+                createNode.propTypes = {
+                        id: PropTypes.string.isRequired,
+                        Component: PropTypes.element.isRequired
+                };
+                NodeC.propTypes = {
+                        id: PropTypes.string.isRequired,
+                        Component: PropTypes.element.isRequired
+                };
+                NodeC.prototype.useContractCallback.propTypes = {
+                        forNode: PropTypes.string.isRequired,
+                        actionName: PropTypes.string.isRequired,
+                        func: PropTypes.func.isRequired
+                };
+                NodeC.prototype.useActionCallback.propTypes = {
+                        actionName: PropTypes.string.isRequired,
+                        func: PropTypes.func.isRequired
+                };
+                NodeC.prototype.useAction.propTypes = {
+                        actionName: PropTypes.string.isRequired,
+                        newState: PropTypes.oneOfType([PropTypes.object, PropTypes.func]).isRequired
+                };
+                NodeC.prototype.useContract.propTypes = {
+                        forNode: PropTypes.string.isRequired,
+                        actionName: PropTypes.string.isRequired,
+                        newState: PropTypes.oneOfType([PropTypes.object, PropTypes.func]).isRequired
+                };
+                NodeC.prototype.state.propTypes = {
+                        state: PropTypes.object.isRequired
+                };
+                dispatchNode.propTypes = PropTypes.shape({
+                        id: PropTypes.string.isRequired,
+                        actions: PropTypes.object.isRequired,
+                        contract: PropTypes.object.isRequired,
+                        Component: PropTypes.element.isRequired
+                });
         });
 }
 /**
@@ -127,6 +174,8 @@ const dispatchNode = ({
         contract,
         Component
 }) => {
+        var _class, _temp;
+
         let C = {};
 
         if (Component === null) {
@@ -134,11 +183,16 @@ const dispatchNode = ({
                 throw new Error();
         }
 
-        C[id] = class extends _react.default.PureComponent {
+        C[id] = (_temp = _class = class extends _react.default.PureComponent {
                 constructor(props) {
                         super(props);
                         this.state = {
                                 rootzStateHandlerVariable: 0
+                        }; // this helps make actions static variable to be used as dependency for useEffect, useCallback and useMemo 
+
+                        this.actions = {
+                                ...actions,
+                                ...contract
                         };
                 }
 
@@ -159,14 +213,11 @@ const dispatchNode = ({
                                 state: updatedState,
                                 profile: profile,
                                 props: this.props,
-                                actions: {
-                                        ...actions,
-                                        ...contract
-                                }
+                                actions: this.actions
                         });
                 }
 
-        };
+        }, _defineProperty(_class, "displayName", id), _temp);
         return C[id];
 };
 /**
@@ -297,10 +348,10 @@ NodeC.prototype.useActionCallback = function (actionName, func) {
 
         let derivedAction = {};
 
-        derivedAction[actionName] = (...props) => {
+        derivedAction[actionName] = async (...props) => {
                 now("$" + actionName);
                 const selfState = store[this.id]["state"];
-                const derivedState = func(selfState, props);
+                const derivedState = await func(selfState, props);
                 store[this.id]["state"] = setImmutableObject(selfState, derivedState);
                 requestUpdate(this.id);
         };
@@ -336,10 +387,10 @@ NodeC.prototype.useContractCallback = function (forNode, actionName, func) {
 
         let derivedContract = {};
 
-        derivedContract[actionName] = (...props) => {
+        derivedContract[actionName] = async (...props) => {
                 now("$" + actionName);
                 const calleeState = store["#" + forNode]["state"];
-                const derivedState = func(calleeState, props);
+                const derivedState = await func(calleeState, props);
                 store["#" + forNode]["state"] = setImmutableObject(calleeState, derivedState);
                 requestUpdate("#" + forNode);
         };
