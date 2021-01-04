@@ -143,9 +143,12 @@ const dispatchNode = ({ id, actions, contract, Component }) => {
                 throw new Error();
         }
         C[id] = class extends React.PureComponent {
+                static displayName = id;
                 constructor(props) {
                         super(props);
                         this.state = { rootzStateHandlerVariable: 0 };
+                        // this helps make actions static variable to be used as dependency for useEffect, useCallback and useMemo 
+                        this.actions = { ...actions, ...contract };
                 }
                 componentDidMount() {
                         now(id);
@@ -164,7 +167,7 @@ const dispatchNode = ({ id, actions, contract, Component }) => {
                                         state={updatedState}
                                         profile={profile}
                                         props={this.props}
-                                        actions={{ ...actions, ...contract }}
+                                        actions={this.actions}
                                 />
                         );
                 }
@@ -332,10 +335,10 @@ NodeC.prototype.useActionCallback = function (actionName, func) {
                 }
         }
         let derivedAction = {};
-        derivedAction[actionName] = (...props) => {
+        derivedAction[actionName] = async (...props) => {
                 now("$" + actionName);
                 const selfState = store[this.id]["state"];
-                const derivedState = func(selfState, props);
+                const derivedState = await func(selfState, props);
                 store[this.id]["state"] = setImmutableObject(
                         selfState,
                         derivedState
@@ -385,10 +388,10 @@ NodeC.prototype.useContractCallback = function (forNode, actionName, func) {
                 }
         }
         let derivedContract = {};
-        derivedContract[actionName] = (...props) => {
+        derivedContract[actionName] = async (...props) => {
                 now("$" + actionName);
                 const calleeState = store["#" + forNode]["state"];
-                const derivedState = func(calleeState, props);
+                const derivedState = await func(calleeState, props);
                 store["#" + forNode]["state"] = setImmutableObject(
                         calleeState,
                         derivedState
