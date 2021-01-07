@@ -3,7 +3,10 @@
 Object.defineProperty(exports, "__esModule", {
         value: true
 });
-exports.logger = exports.logMap = exports.logType = void 0;
+exports.checkErr = exports.logger = exports.logType = void 0;
+
+var _rootzCoreDev = require("./rootz-core-dev");
+
 const logType = {
         inf: "info",
         bra: "brand",
@@ -43,7 +46,6 @@ const logMap = {
         // Invalid type State Required Object
         ITSRO: (name, actionName) => `%cRootz Error: In '${name}', Invalid type arguments in '${actionName}', required Object. States are of type Object only.`
 };
-exports.logMap = logMap;
 
 const logger = (type, logMap) => {
         switch (type) {
@@ -79,3 +81,90 @@ const logger = (type, logMap) => {
 };
 
 exports.logger = logger;
+const checkErr = {
+        checksForStateObject: (id, state) => {
+                if (typeof state !== "object") {
+                        logger(logType.err, logMap.ITSRO(id));
+                        throw new Error();
+                }
+        },
+        checksForNodeNotFound: (Component, id) => {
+                if (Component === null) {
+                        logger(logType.err, logMap.NNF(id));
+                        throw new Error();
+                }
+        },
+        checkLogsForCreateNode: (args, id) => {
+                const store = (0, _rootzCoreDev.getAllNodes)(); // if less / more arguments passed
+
+                if (args.length != 2) {
+                        logger(logType.err, logMap.INOA(id));
+                        throw new Error();
+                } // if Node already exists with the name
+
+
+                if (Object.prototype.hasOwnProperty.call(store, "#" + id)) {
+                        logger(logType.err, logMap.DENI(id));
+                        throw new Error();
+                }
+        },
+        checkLogsForUseAction: (id, actionName, newState) => {
+                if (typeof actionName !== "string") {
+                        logger(logType.err, logMap.ITANRS(id, actionName));
+                        throw new Error();
+                }
+
+                if (!(typeof newState === "object" || typeof newState === "function")) {
+                        logger(logType.err, logMap.ITSROOF(id, actionName));
+                        throw new Error();
+                }
+        },
+        checkLogsForUseContract: (id, forNode, actionName, newState) => {
+                const store = (0, _rootzCoreDev.getAllNodes)(); // if Node already exists with the name
+
+                if (Object.prototype.hasOwnProperty.call(store, forNode)) {
+                        logger(logType.err, logMap.ITNI(id, forNode));
+                        throw new Error();
+                }
+
+                if (typeof actionName !== "string") {
+                        logger(logType.err, logMap.ITANRS(id, actionName));
+                        throw new Error();
+                }
+
+                if (!(typeof newState === "object" || typeof newState === "function")) {
+                        logger(logType.err, logMap.ITSROOF(id, actionName));
+                        throw new Error();
+                }
+        },
+        checkLogsForUseActionCallback: (id, actionName, func) => {
+                if (typeof actionName !== "string") {
+                        logger(logType.err, logMap.ITANRS(id, actionName));
+                        throw new Error();
+                }
+
+                if (typeof func !== "function") {
+                        logger(logType.err, logMap.ITCRF(id, actionName));
+                        throw new Error();
+                }
+        },
+        checkLogsForUseContractCallback: (id, actionName, forNode, func) => {
+                const store = (0, _rootzCoreDev.getAllNodes)();
+
+                if (Object.prototype.hasOwnProperty.call(store, forNode)) {
+                        logger(logType.err, logMap.ITNI(id, forNode));
+                        throw new Error();
+                }
+
+                if (typeof actionName !== "string") {
+                        logger(logType.err, logMap.ITANRS(id, actionName));
+                        throw new Error();
+                }
+
+                if (typeof func !== "function") {
+                        logger(logType.err, logMap.ITCRF(id, actionName));
+                        throw new Error();
+                }
+        }
+};
+exports.checkErr = checkErr;

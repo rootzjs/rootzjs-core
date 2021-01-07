@@ -1,3 +1,5 @@
+import { getAllNodes } from './rootz-core-dev';
+
 export const logType = {
         inf: "info",
         bra: "brand",
@@ -22,7 +24,7 @@ const consoleColorCode = {
                         "color: #fff; font-size:12px;  border-radius: 3px; padding: 2px 7px 2px 7px; text-align: center; background-color: #677b8c;"
         }
 };
-export const logMap = {
+const logMap = {
         // Node Not Found
         NNF: name =>
                 `%cRootz Error: Node ${name} should have a defined Component`,
@@ -77,4 +79,136 @@ export const logger = (type, logMap) => {
                         console.log(logMap, consoleColorCode.information.brand);
                 }
         }
-};
+}
+export const checkErr = {
+        checksForStateObject: (id, state) => {
+                if (typeof state !== "object") {
+                        logger(
+                                logType.err,
+                                logMap.ITSRO(id)
+                        );
+                        throw new Error();
+                }
+        },
+        checksForNodeNotFound: (Component, id) => {
+                if (Component === null) {
+                        logger(logType.err, logMap.NNF(id));
+                        throw new Error();
+                }
+        },
+        checkLogsForCreateNode: (args, id) => {
+                const store = getAllNodes();
+                // if less / more arguments passed
+                if (args.length != 2) {
+                        logger(logType.err, logMap.INOA(id));
+                        throw new Error();
+                }
+                // if Node already exists with the name
+                if (Object.prototype.hasOwnProperty.call(store, "#" + id)) {
+                        logger(logType.err, logMap.DENI(id));
+                        throw new Error();
+                }
+        },
+        checkLogsForUseAction: (id, actionName, newState) => {
+                if (typeof actionName !== "string") {
+                        logger(
+                                logType.err,
+                                logMap.ITANRS(id, actionName)
+                        );
+                        throw new Error();
+                }
+                if (!(typeof newState === "object" || typeof newState === "function")) {
+                        logger(
+                                logType.err,
+                                logMap.ITSROOF(
+                                        id,
+                                        actionName
+                                )
+                        );
+                        throw new Error();
+                }
+        },
+        checkLogsForUseContract: (id, forNode, actionName, newState) => {
+                const store = getAllNodes();
+                // if Node already exists with the name
+                if (Object.prototype.hasOwnProperty.call(store, forNode)) {
+                        logger(
+                                logType.err,
+                                logMap.ITNI(id, forNode)
+                        );
+                        throw new Error();
+                }
+                if (typeof actionName !== "string") {
+                        logger(
+                                logType.err,
+                                logMap.ITANRS(
+                                        id,
+                                        actionName
+                                )
+                        );
+                        throw new Error();
+                }
+                if (!(typeof newState === "object" || typeof newState === "function")) {
+                        logger(
+                                logType.err,
+                                logMap.ITSROOF(
+                                        id,
+                                        actionName
+                                )
+                        );
+                        throw new Error();
+                }
+        },
+        checkLogsForUseActionCallback: (id, actionName, func) => {
+                if (typeof actionName !== "string") {
+                        logger(
+                                logType.err,
+                                logMap.ITANRS(
+                                        id,
+                                        actionName
+                                )
+                        );
+                        throw new Error();
+                }
+                if (typeof func !== "function") {
+                        logger(
+                                logType.err,
+                                logMap.ITCRF(
+                                        id,
+                                        actionName
+                                )
+                        );
+                        throw new Error();
+                }
+        },
+        checkLogsForUseContractCallback: (id, actionName, forNode, func) => {
+                const store = getAllNodes();
+                if (Object.prototype.hasOwnProperty.call(store, forNode)) {
+                        logger(
+                                logType.err,
+                                logMap.ITNI(id, forNode)
+                        );
+                        throw new Error();
+                }
+                if (typeof actionName !== "string") {
+                        logger(
+                                logType.err,
+                                logMap.ITANRS(
+                                        id,
+                                        actionName
+                                )
+                        );
+                        throw new Error();
+                }
+                if (typeof func !== "function") {
+                        logger(
+                                logType.err,
+                                logMap.ITCRF(
+                                        id,
+                                        actionName
+                                )
+                        );
+                        throw new Error();
+                }
+        }
+}

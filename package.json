@@ -7,7 +7,9 @@
         "test": "jest",
         "test:watch": "npm test -- --watch",
         "test:cov": "npm test -- --coverage",
-        "webpack": "webpack --config webpack.config.js",
+        "webpack-dev": "webpack --config webpack.dev.js",
+        "webpack-prod": "webpack --config webpack.prod.js",
+        "webpack": "npm run webpack-dev && npm run webpack-prod",
         "lint": "eslint --fix \"{src, tests}/**/*.{js,jsx}\"",
         "format": "prettier --write \"{src, test}/**/*.{js,jsx}\"",
         "format:check": "prettier --list-different \"{src, tests}/**/*.{js,jsx}\"",
@@ -73,6 +75,7 @@
         "terser-webpack-plugin": "^5.0.3",
         "web-vitals": "^1.0.1",
         "webpack": "^5.10.1",
-        "webpack-cli": "^4.2.0"
+        "webpack-cli": "^4.2.0",
+        "webpack-merge": "^5.7.3"
     }
 }

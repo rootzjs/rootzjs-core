@@ -1,13 +1,3 @@
-/** @license RootzJs v2.0.23
- ** @author Trishanth Naidu
- ** @github https://github.com/rootzjs/core v2.0.23
- * react-jsx-dev-runtime.development.js
- * Copyright 2019 Trishanth Naidu
- * Copyright (c) Rootz Js,and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17,23 +7,19 @@ exports.getAllNodes = exports.getProfile = exports.setProfile = exports.createNo
 
 var _react = _interopRequireDefault(require("react"));
 
+var _propTypes = _interopRequireDefault(require("prop-types"));
+
+var _logs = require("./logs");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
 
 // performance measure empty object for test
 window.performance.measure = window.performance.measure || function () { };
 
 let bus = {};
-let logMap;
-let logger;
-let logType;
-const store = {};
-const isDev = process.env.NODE_ENV === "development";
+let store = {};
 
 const now = id => performance.measure(id);
 
@@ -49,60 +35,8 @@ const requestUpdate = function (id) {
         });
 };
 
-now("@@APP_INIT"); // Dynamic import of modules based on Env
-
-if (isDev) {
-        Promise.resolve().then(() => _interopRequireWildcard(require("./logs"))).then(module => {
-                logMap = module.logMap;
-                logger = module.logger;
-                logType = module.logType;
-                logger(logType.bra, `%cUse Rootz DevTools for better debugging experience: https://devtools.rootzjs.org`);
-        });
-        Promise.resolve().then(() => _interopRequireWildcard(require("prop-types"))).then(module => {
-                const {
-                        PropTypes
-                } = module;
-                /**
-                 * Type Definitions for Dev only
-                 */
-
-                createNode.propTypes = {
-                        id: PropTypes.string.isRequired,
-                        Component: PropTypes.element.isRequired
-                };
-                NodeC.propTypes = {
-                        id: PropTypes.string.isRequired,
-                        Component: PropTypes.element.isRequired
-                };
-                NodeC.prototype.useContractCallback.propTypes = {
-                        forNode: PropTypes.string.isRequired,
-                        actionName: PropTypes.string.isRequired,
-                        func: PropTypes.func.isRequired
-                };
-                NodeC.prototype.useActionCallback.propTypes = {
-                        actionName: PropTypes.string.isRequired,
-                        func: PropTypes.func.isRequired
-                };
-                NodeC.prototype.useAction.propTypes = {
-                        actionName: PropTypes.string.isRequired,
-                        newState: PropTypes.oneOfType([PropTypes.object, PropTypes.func]).isRequired
-                };
-                NodeC.prototype.useContract.propTypes = {
-                        forNode: PropTypes.string.isRequired,
-                        actionName: PropTypes.string.isRequired,
-                        newState: PropTypes.oneOfType([PropTypes.object, PropTypes.func]).isRequired
-                };
-                NodeC.prototype.state.propTypes = {
-                        state: PropTypes.object.isRequired
-                };
-                dispatchNode.propTypes = PropTypes.shape({
-                        id: PropTypes.string.isRequired,
-                        actions: PropTypes.object.isRequired,
-                        contract: PropTypes.object.isRequired,
-                        Component: PropTypes.element.isRequired
-                });
-        });
-}
+(0, _logs.logger)(_logs.logType.bra, `%cUse Rootz DevTools for better debugging experience: https://devtools.rootzjs.org`);
+now("@@APP_INIT");
 /**
  * To view all the Nodes defined in the Application at any point of time
  *
@@ -114,7 +48,6 @@ if (isDev) {
  * @returns {bus} void
  *
  */
-
 
 const setProfile = function (state) {
         bus = setImmutableObject(bus, state);
@@ -178,10 +111,7 @@ const dispatchNode = ({
 
         let C = {};
 
-        if (Component === null) {
-                logger(logType.err, logMap.NNF(id));
-                throw new Error();
-        }
+        _logs.checkErr.checksForNodeNotFound(Component, id);
 
         C[id] = (_temp = _class = class extends _react.default.PureComponent {
                 constructor(props) {
@@ -241,10 +171,7 @@ const NodeC = function (id, Component) {
 
 
 NodeC.prototype.state = function (state) {
-        if (typeof state !== "object") {
-                logger(logType.err, logMap.ITSRO(this.id));
-                throw new Error();
-        }
+        _logs.checkErr.checksForStateObject(this.id, state);
 
         store[this.id]["state"] = setImmutableObject(store[this.id]["state"], state);
         this.state = state || {};
@@ -258,23 +185,7 @@ NodeC.prototype.state = function (state) {
 
 
 NodeC.prototype.useContract = function (forNode, actionName, newState) {
-        if (isDev) {
-                // if Node already exists with the name
-                if (Object.prototype.hasOwnProperty.call(store, forNode)) {
-                        logger(logType.err, logMap.ITNI(this.id, forNode));
-                        throw new Error();
-                }
-
-                if (typeof actionName !== "string") {
-                        logger(logType.err, logMap.ITANRS(this.id, actionName));
-                        throw new Error();
-                }
-
-                if (!(typeof newState === "object" || typeof newState === "function")) {
-                        logger(logType.err, logMap.ITSROOF(this.id, actionName));
-                        throw new Error();
-                }
-        }
+        _logs.checkErr.checkLogsForUseContract(this.id, forNode, actionName, newState);
 
         if (typeof newState === "object") {
                 let derivedContract = {};
@@ -299,17 +210,7 @@ NodeC.prototype.useContract = function (forNode, actionName, newState) {
 
 
 NodeC.prototype.useAction = function (actionName, newState) {
-        if (isDev) {
-                if (typeof actionName !== "string") {
-                        logger(logType.err, logMap.ITANRS(this.id, actionName));
-                        throw new Error();
-                }
-
-                if (!(typeof newState === "object" || typeof newState === "function")) {
-                        logger(logType.err, logMap.ITSROOF(this.id, actionName));
-                        throw new Error();
-                }
-        }
+        _logs.checkErr.checkLogsForUseAction(this.id, actionName, newState);
 
         if (typeof newState === "object") {
                 let derivedAction = {};
@@ -334,17 +235,7 @@ NodeC.prototype.useAction = function (actionName, newState) {
 
 
 NodeC.prototype.useActionCallback = function (actionName, func) {
-        if (isDev) {
-                if (typeof actionName !== "string") {
-                        logger(logType.err, logMap.ITANRS(this.id, actionName));
-                        throw new Error();
-                }
-
-                if (typeof func !== "function") {
-                        logger(logType.err, logMap.ITCRF(this.id, actionName));
-                        throw new Error();
-                }
-        }
+        _logs.checkErr.checkLogsForUseActionCallback(this.id, actionName, func);
 
         let derivedAction = {};
 
@@ -368,22 +259,7 @@ NodeC.prototype.useActionCallback = function (actionName, func) {
 
 
 NodeC.prototype.useContractCallback = function (forNode, actionName, func) {
-        if (isDev) {
-                if (Object.prototype.hasOwnProperty.call(store, forNode)) {
-                        logger(logType.err, logMap.ITNI(this.id, forNode));
-                        throw new Error();
-                }
-
-                if (typeof actionName !== "string") {
-                        logger(logType.err, logMap.ITANRS(this.id, actionName));
-                        throw new Error();
-                }
-
-                if (typeof func !== "function") {
-                        logger(logType.err, logMap.ITCRF(this.id, actionName));
-                        throw new Error();
-                }
-        }
+        _logs.checkErr.checkLogsForUseContractCallback(this.id, actionName, forNode, func);
 
         let derivedContract = {};
 
@@ -444,19 +320,9 @@ NodeC.prototype.setProfile = function (newState) {
 
 
 const createNode = function (id, Component) {
-        // if less / more arguments passed
-        if (isDev && arguments.length != 2) {
-                logger(logType.err, logMap.INOA(id));
-                throw new Error();
-        }
+        _logs.checkErr.checkLogsForCreateNode(arguments, id);
 
-        const nodeId = "#" + id; // if Node already exists with the name
-
-        if (Object.prototype.hasOwnProperty.call(store, nodeId)) {
-                logger(logType.err, logMap.DENI(id));
-                throw new Error();
-        }
-
+        const nodeId = "#" + id;
         const node = new NodeC(nodeId, Component);
         store[nodeId] = {
                 actions: [],
@@ -467,5 +333,44 @@ const createNode = function (id, Component) {
 
         return [node, dispatchNode];
 };
+/**
+ * Type Definitions for Dev only
+ */
+
 
 exports.createNode = createNode;
+createNode.propTypes = {
+        id: _propTypes.default.string.isRequired,
+        Component: _propTypes.default.element.isRequired
+};
+NodeC.propTypes = {
+        id: _propTypes.default.string.isRequired,
+        Component: _propTypes.default.element.isRequired
+};
+NodeC.prototype.useContractCallback.propTypes = {
+        forNode: _propTypes.default.string.isRequired,
+        actionName: _propTypes.default.string.isRequired,
+        func: _propTypes.default.func.isRequired
+};
+NodeC.prototype.useActionCallback.propTypes = {
+        actionName: _propTypes.default.string.isRequired,
+        func: _propTypes.default.func.isRequired
+};
+NodeC.prototype.useAction.propTypes = {
+        actionName: _propTypes.default.string.isRequired,
+        newState: _propTypes.default.oneOfType([_propTypes.default.object, _propTypes.default.func]).isRequired
+};
+NodeC.prototype.useContract.propTypes = {
+        forNode: _propTypes.default.string.isRequired,
+        actionName: _propTypes.default.string.isRequired,
+        newState: _propTypes.default.oneOfType([_propTypes.default.object, _propTypes.default.func]).isRequired
+};
+NodeC.prototype.state.propTypes = {
+        state: _propTypes.default.object.isRequired
+};
+dispatchNode.propTypes = _propTypes.default.shape({
+        id: _propTypes.default.string.isRequired,
+        actions: _propTypes.default.object.isRequired,
+        contract: _propTypes.default.object.isRequired,
+        Component: _propTypes.default.element.isRequired
+});
