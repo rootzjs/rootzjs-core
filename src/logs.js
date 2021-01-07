@@ -79,7 +79,7 @@ export const logger = (type, logMap) => {
                         console.log(logMap, consoleColorCode.information.brand);
                 }
         }
-}
+};
 export const checkErr = {
         checksForStateObject: (id, state) => {
                 if (typeof state !== "object") {
@@ -211,4 +211,4 @@ export const checkErr = {
                         throw new Error();
                 }
         }
-}
+};

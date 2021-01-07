@@ -152,7 +152,7 @@ NodeC.prototype.state = function (state) {
  * @returns void
  */
 NodeC.prototype.useContract = function (forNode, actionName, newState) {
-        checkErr.checkLogsForUseContract(this.id, forNode, actionName, newState)
+        checkErr.checkLogsForUseContract(this.id, forNode, actionName, newState);
         if (typeof newState === "object") {
                 let derivedContract = {};
                 derivedContract[actionName] = () => {
