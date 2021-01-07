@@ -10,48 +10,27 @@
 
 Rootz JS, is an open source JavaScript Library for maintaining application state.
 
-It makes it easy to manage the state of your application. Another way of looking at this is, it helps you manage the data you display and how you respond to user actions. It helps you to view your application state as a whole at any point during application run. 
+## Documentation
 
-Rootz, helps you write applications with complete hold over its state. This makes it possible for you to monitor changes happening at each component level.
+You can find the Rootz Documentation on the [**Website**](https://rootzjs.org).
 
-Just think of it as a root of a plant, which starts as a single node (*index.js*). As you go deeper it spreads into interconnected bunch of nodes. A way to visualize your applications.
+Checkout the [**Getting Started**](https://rootzjs.org/#/introduction) page for a quick overview.
 
-> **Note**: Presently Rootz JS is made with React in mind. We are planning to extend support to other JavaScript Libraries & Frameworks.
+- [**Introduction**](https://rootzjs.org/#/introduction)
+- [**Installation**](https://rootzjs.org/#/installation)
+- [**Concepts**](https://rootzjs.org/#/components)
+- [**Workbook**](https://rootzjs.org/#/overview)
+
 
 ## Rootz Devtools
 **Rootz Devtools** provides a incomparable coding and debugging experience. It provides see through visualization to the application's Root. 
 
 For more info, visit [**devtools.rootzjs.org**](http://devtools.rootzjs.org/) (*currently in development with additional features*).
 
-## Getting to know more… 
+## Examples
 
-To implement Rootz, basic understanding of JavaScript would do just fine. 
+- [**Todo App**](https://github.com/rootzjs/examples-todo-with-ui) - [**Demo**](https://rootzjs.github.io/examples-todo-with-ui/)
 
-
-There are four key elements which one needs to be aware of for implementing Rootz. 
-
-### Node
-- A Node represents a React Component.
-- All Nodes have a unique Id, called as NODE_ID.
-- Each Node has it's own state which internally is a part of the Application Root.
-- A React-Rootz application depicts a Root (*A Tree in DS terms*) with interconnected Nodes.
-- An instance of Node provides helper methods to create Actions and Contracts.
-
-
-### Root
-- A Root is basically a tree (*in DS terms*), which is defined with the instances of all the Nodes in an Application.
-- It is true to the application's current state, hence the only source of truth.
-
-
-### Actions
-- Actions are functions which updates the state of the Node in which it is defined.
-- An Action should always return a JavaScript Object.
-- Actions are limited to the scope of the Node it is defined in.
-
-
-### Contract
-- Contract is an agreement made to update the state of any Node in the Application, accept the one in which it is defined (*for which we have Actions*).
-- Contract is an Action by nature, with an only difference; that it updates the state of other Nodes.
 
 ## Installation
 
@@ -73,7 +52,7 @@ yarn add --dev @rootzjs/core
 
 Once all the dependencies are installed, we are all set to use Rootz.
 
-## Getting Started...
+## Learning
 
 Now as you are all ready to use Rootz, lets go through the implementation of the concepts we know so far.
 
