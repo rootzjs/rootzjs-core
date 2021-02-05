@@ -1,5 +1,5 @@
 import React from 'react';
-import { createNode } from '../dist/rootz-core.min.js';
+import { createNode } from '../../dist/rootz-core.prod';
 
 // Test to Print a text "Hello" without state
 const [node, dispatchNode] =

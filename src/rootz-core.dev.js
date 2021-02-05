@@ -9,16 +9,14 @@
  * LICENSE file in the root directory of this source tree.
  */
 import React from "react";
+import PropTypes from "prop-types";
+import { checkErr, logger, logType } from "./logs-dev";
 
 // performance measure empty object for test
 window.performance.measure = window.performance.measure || function () { };
 
 let bus = {};
-let logMap;
-let logger;
-let logType;
-const store = {};
-const isDev = process.env.NODE_ENV === "development";
+let store = {};
 const now = id => performance.measure(id);
 const setImmutableObject = (state, newState) =>
         Object.assign({}, state, newState);
@@ -30,61 +28,13 @@ const requestUpdate = function (id) {
 
         scope.updater.enqueueSetState(scope, { rootzStateHandlerVariable });
 };
-now("@@APP_INIT");
-// Dynamic import of modules based on Env
-if (isDev) {
-        import("./logs").then(module => {
-                logMap = module.logMap;
-                logger = module.logger;
-                logType = module.logType;
-                logger(
-                        logType.bra,
-                        `%cUse Rootz DevTools for better debugging experience: https://devtools.rootzjs.org`
-                );
-        });
-        import("prop-types").then(module => {
-                const { PropTypes } = module;
 
-                /**
-                 * Type Definitions for Dev only
-                 */
-                createNode.propTypes = {
-                        id: PropTypes.string.isRequired,
-                        Component: PropTypes.element.isRequired
-                };
-                NodeC.propTypes = {
-                        id: PropTypes.string.isRequired,
-                        Component: PropTypes.element.isRequired
-                };
-                NodeC.prototype.useContractCallback.propTypes = {
-                        forNode: PropTypes.string.isRequired,
-                        actionName: PropTypes.string.isRequired,
-                        func: PropTypes.func.isRequired
-                };
-                NodeC.prototype.useActionCallback.propTypes = {
-                        actionName: PropTypes.string.isRequired,
-                        func: PropTypes.func.isRequired
-                };
-                NodeC.prototype.useAction.propTypes = {
-                        actionName: PropTypes.string.isRequired,
-                        newState: PropTypes.oneOfType([PropTypes.object, PropTypes.func]).isRequired
-                };
-                NodeC.prototype.useContract.propTypes = {
-                        forNode: PropTypes.string.isRequired,
-                        actionName: PropTypes.string.isRequired,
-                        newState: PropTypes.oneOfType([PropTypes.object, PropTypes.func]).isRequired
-                };
-                NodeC.prototype.state.propTypes = {
-                        state: PropTypes.object.isRequired
-                };
-                dispatchNode.propTypes = PropTypes.shape({
-                        id: PropTypes.string.isRequired,
-                        actions: PropTypes.object.isRequired,
-                        contract: PropTypes.object.isRequired,
-                        Component: PropTypes.element.isRequired
-                });
-        });
-}
+logger(
+        logType.bra,
+        `%cUse Rootz DevTools for better debugging experience: https://devtools.rootzjs.org`
+);
+now("@@APP_INIT");
+
 /**
  * To view all the Nodes defined in the Application at any point of time
  *
@@ -138,10 +88,7 @@ const getProfile = function () {
  */
 const dispatchNode = ({ id, actions, contract, Component }) => {
         let C = {};
-        if (Component === null) {
-                logger(logType.err, logMap.NNF(id));
-                throw new Error();
-        }
+        checkErr.checksForNodeNotFound(Component, id);
         C[id] = class extends React.PureComponent {
                 static displayName = id;
                 constructor(props) {
@@ -193,13 +140,7 @@ const NodeC = function (id, Component) {
  * @returns void
  */
 NodeC.prototype.state = function (state) {
-        if (typeof state !== "object") {
-                logger(
-                        logType.err,
-                        logMap.ITSRO(this.id)
-                );
-                throw new Error();
-        }
+        checkErr.checksForStateObject(this.id, state);
         store[this.id]["state"] = setImmutableObject(store[this.id]["state"], state);
         this.state = state || {};
 };
@@ -211,36 +152,7 @@ NodeC.prototype.state = function (state) {
  * @returns void
  */
 NodeC.prototype.useContract = function (forNode, actionName, newState) {
-        if (isDev) {
-                // if Node already exists with the name
-                if (Object.prototype.hasOwnProperty.call(store, forNode)) {
-                        logger(
-                                logType.err,
-                                logMap.ITNI(this.id, forNode)
-                        );
-                        throw new Error();
-                }
-                if (typeof actionName !== "string") {
-                        logger(
-                                logType.err,
-                                logMap.ITANRS(
-                                        this.id,
-                                        actionName
-                                )
-                        );
-                        throw new Error();
-                }
-                if (!(typeof newState === "object" || typeof newState === "function")) {
-                        logger(
-                                logType.err,
-                                logMap.ITSROOF(
-                                        this.id,
-                                        actionName
-                                )
-                        );
-                        throw new Error();
-                }
-        }
+        checkErr.checkLogsForUseContract(this.id, forNode, actionName, newState);
         if (typeof newState === "object") {
                 let derivedContract = {};
                 derivedContract[actionName] = () => {
@@ -267,25 +179,7 @@ NodeC.prototype.useContract = function (forNode, actionName, newState) {
  * @returns void
  */
 NodeC.prototype.useAction = function (actionName, newState) {
-        if (isDev) {
-                if (typeof actionName !== "string") {
-                        logger(
-                                logType.err,
-                                logMap.ITANRS(this.id, actionName)
-                        );
-                        throw new Error();
-                }
-                if (!(typeof newState === "object" || typeof newState === "function")) {
-                        logger(
-                                logType.err,
-                                logMap.ITSROOF(
-                                        this.id,
-                                        actionName
-                                )
-                        );
-                        throw new Error();
-                }
-        }
+        checkErr.checkLogsForUseAction(this.id, actionName, newState);
         if (typeof newState === "object") {
                 let derivedAction = {};
                 derivedAction[actionName] = () => {
@@ -312,28 +206,7 @@ NodeC.prototype.useAction = function (actionName, newState) {
  * @returns void
  */
 NodeC.prototype.useActionCallback = function (actionName, func) {
-        if (isDev) {
-                if (typeof actionName !== "string") {
-                        logger(
-                                logType.err,
-                                logMap.ITANRS(
-                                        this.id,
-                                        actionName
-                                )
-                        );
-                        throw new Error();
-                }
-                if (typeof func !== "function") {
-                        logger(
-                                logType.err,
-                                logMap.ITCRF(
-                                        this.id,
-                                        actionName
-                                )
-                        );
-                        throw new Error();
-                }
-        }
+        checkErr.checkLogsForUseActionCallback(this.id, actionName, func);
         let derivedAction = {};
         derivedAction[actionName] = async (...props) => {
                 now("$" + actionName);
@@ -358,35 +231,7 @@ NodeC.prototype.useActionCallback = function (actionName, func) {
  * @returns void
  */
 NodeC.prototype.useContractCallback = function (forNode, actionName, func) {
-        if (isDev) {
-                if (Object.prototype.hasOwnProperty.call(store, forNode)) {
-                        logger(
-                                logType.err,
-                                logMap.ITNI(this.id, forNode)
-                        );
-                        throw new Error();
-                }
-                if (typeof actionName !== "string") {
-                        logger(
-                                logType.err,
-                                logMap.ITANRS(
-                                        this.id,
-                                        actionName
-                                )
-                        );
-                        throw new Error();
-                }
-                if (typeof func !== "function") {
-                        logger(
-                                logType.err,
-                                logMap.ITCRF(
-                                        this.id,
-                                        actionName
-                                )
-                        );
-                        throw new Error();
-                }
-        }
+        checkErr.checkLogsForUseContractCallback(this.id, actionName, forNode, func);
         let derivedContract = {};
         derivedContract[actionName] = async (...props) => {
                 now("$" + actionName);
@@ -446,17 +291,8 @@ NodeC.prototype.setProfile = function (newState) {
  *
  */
 const createNode = function (id, Component) {
-        // if less / more arguments passed
-        if (isDev && arguments.length != 2) {
-                logger(logType.err, logMap.INOA(id));
-                throw new Error();
-        }
+        checkErr.checkLogsForCreateNode(arguments, id);
         const nodeId = "#" + id;
-        // if Node already exists with the name
-        if (Object.prototype.hasOwnProperty.call(store, nodeId)) {
-                logger(logType.err, logMap.DENI(id));
-                throw new Error();
-        }
         const node = new NodeC(nodeId, Component);
 
         store[nodeId] = {
@@ -469,5 +305,43 @@ const createNode = function (id, Component) {
         return [node, dispatchNode];
 };
 
+/**
+ * Type Definitions for Dev only
+ */
+createNode.propTypes = {
+        id: PropTypes.string.isRequired,
+        Component: PropTypes.element.isRequired
+};
+NodeC.propTypes = {
+        id: PropTypes.string.isRequired,
+        Component: PropTypes.element.isRequired
+};
+NodeC.prototype.useContractCallback.propTypes = {
+        forNode: PropTypes.string.isRequired,
+        actionName: PropTypes.string.isRequired,
+        func: PropTypes.func.isRequired
+};
+NodeC.prototype.useActionCallback.propTypes = {
+        actionName: PropTypes.string.isRequired,
+        func: PropTypes.func.isRequired
+};
+NodeC.prototype.useAction.propTypes = {
+        actionName: PropTypes.string.isRequired,
+        newState: PropTypes.oneOfType([PropTypes.object, PropTypes.func]).isRequired
+};
+NodeC.prototype.useContract.propTypes = {
+        forNode: PropTypes.string.isRequired,
+        actionName: PropTypes.string.isRequired,
+        newState: PropTypes.oneOfType([PropTypes.object, PropTypes.func]).isRequired
+};
+NodeC.prototype.state.propTypes = {
+        state: PropTypes.object.isRequired
+};
+dispatchNode.propTypes = PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        actions: PropTypes.object.isRequired,
+        contract: PropTypes.object.isRequired,
+        Component: PropTypes.element.isRequired
+});
 
-export { createNode as createNode, setProfile, getProfile, getAllNodes };
+export { createNode, setProfile, getProfile, getAllNodes };
