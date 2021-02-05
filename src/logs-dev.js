@@ -1,4 +1,4 @@
-import { getAllNodes } from './rootz-core-dev';
+import { getAllNodes } from './rootz-core.dev';
 
 export const logType = {
         inf: "info",

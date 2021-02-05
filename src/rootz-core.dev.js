@@ -1,42 +1,40 @@
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-        value: true
-});
-exports.getAllNodes = exports.getProfile = exports.setProfile = exports.createNode = void 0;
-
-var _react = _interopRequireDefault(require("react"));
-
-var _propTypes = _interopRequireDefault(require("prop-types"));
-
-var _logs = require("./logs");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+/** @license RootzJs v2.0.20
+ ** @author Trishanth Naidu
+ ** @github https://github.com/rootzjs/core v2.0.20
+ * react-jsx-dev-runtime.development.js
+ * Copyright 2019 Trishanth Naidu
+ * Copyright (c) Rootz Js,and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+import React from "react";
+import PropTypes from "prop-types";
+import { checkErr, logger, logType } from "./logs-dev";
 
 // performance measure empty object for test
 window.performance.measure = window.performance.measure || function () { };
 
 let bus = {};
 let store = {};
-
 const now = id => performance.measure(id);
-
-const setImmutableObject = (state, newState) => Object.assign({}, state, newState);
-
+const setImmutableObject = (state, newState) =>
+        Object.assign({}, state, newState);
 const setImmutableArray = (state, newState) => [...state, ...newState];
-
 const requestUpdate = function (id) {
         const scope = store[id]["scope"];
-        const rootzStateHandlerVariable = scope["state"]["rootzStateHandlerVariable"] + 1;
-        scope.updater.enqueueSetState(scope, {
-                rootzStateHandlerVariable
-        });
+        const rootzStateHandlerVariable =
+                scope["state"]["rootzStateHandlerVariable"] + 1;
+
+        scope.updater.enqueueSetState(scope, { rootzStateHandlerVariable });
 };
 
-(0, _logs.logger)(_logs.logType.bra, `%cUse Rootz DevTools for better debugging experience: https://devtools.rootzjs.org`);
+logger(
+        logType.bra,
+        `%cUse Rootz DevTools for better debugging experience: https://devtools.rootzjs.org`
+);
 now("@@APP_INIT");
+
 /**
  * To view all the Nodes defined in the Application at any point of time
  *
@@ -48,7 +46,6 @@ now("@@APP_INIT");
  * @returns {bus} void
  *
  */
-
 const setProfile = function (state) {
         bus = setImmutableObject(bus, state);
 };
@@ -62,10 +59,6 @@ const setProfile = function (state) {
  * @returns {{}} Rootz.appRoot
  *
  */
-
-
-exports.setProfile = setProfile;
-
 const getAllNodes = function () {
         return store;
 };
@@ -80,200 +73,182 @@ const getAllNodes = function () {
  * @returns {any} Rootz.Bus
  *
  */
-
-
-exports.getAllNodes = getAllNodes;
-
 const getProfile = function () {
         return bus;
-}; // Insert Node
+};
 
+// Insert Node
 /**
  * @typedef {({ id: String, actions: {}, contract: {}, Component: (React.Component | React.FC) })} dispatchNodeParamType
  */
-
 /**
  *
  * @param {dispatchNodeParamType}
  * @returns {React.PureComponent}
  */
-
-
-exports.getProfile = getProfile;
-
-const dispatchNode = ({
-        id,
-        actions,
-        contract,
-        Component
-}) => {
-        var _class, _temp;
-
+const dispatchNode = ({ id, actions, contract, Component }) => {
         let C = {};
-
-        _logs.checkErr.checksForNodeNotFound(Component, id);
-
-        C[id] = (_temp = _class = class extends _react.default.PureComponent {
+        checkErr.checksForNodeNotFound(Component, id);
+        C[id] = class extends React.PureComponent {
+                static displayName = id;
                 constructor(props) {
                         super(props);
-                        this.state = {
-                                rootzStateHandlerVariable: 0
-                        }; // this helps make actions static variable to be used as dependency for useEffect, useCallback and useMemo 
-
-                        this.actions = {
-                                ...actions,
-                                ...contract
-                        };
+                        this.state = { rootzStateHandlerVariable: 0 };
+                        // this helps make actions static variable to be used as dependency for useEffect, useCallback and useMemo 
+                        this.actions = { ...actions, ...contract };
                 }
-
                 componentDidMount() {
                         now(id);
                 }
-
                 componentDidUpdate() {
                         now(id + "_update");
                 }
-
                 render() {
                         const updatedState = store[id]["state"];
-                        store[id]["scope"] = setImmutableObject(store[id]["scope"], this); // fetches the latest state everytime the package is called
-
+                        store[id]["scope"] = setImmutableObject(store[id]["scope"], this);
+                        // fetches the latest state everytime the package is called
                         const profile = getProfile();
-                        return /*#__PURE__*/_react.default.createElement(Component, {
-                                state: updatedState,
-                                profile: profile,
-                                props: this.props,
-                                actions: this.actions
-                        });
-                }
 
-        }, _defineProperty(_class, "displayName", id), _temp);
+                        return (
+                                <Component
+                                        state={updatedState}
+                                        profile={profile}
+                                        props={this.props}
+                                        actions={this.actions}
+                                />
+                        );
+                }
+        };
         return C[id];
 };
+
 /**
  *
  * @param {string} id string
  * @param {(React.Component | React.FC)} Component React.Component | React.FC
  * @returns void
  */
-
-
 const NodeC = function (id, Component) {
         this.id = id;
         this.actions = {};
         this.contract = {};
         this.Component = Component;
 };
+
 /**
  * @param {{}} state - Object of type any
  * @returns void
  */
-
-
 NodeC.prototype.state = function (state) {
-        _logs.checkErr.checksForStateObject(this.id, state);
-
+        checkErr.checksForStateObject(this.id, state);
         store[this.id]["state"] = setImmutableObject(store[this.id]["state"], state);
         this.state = state || {};
 };
+
 /**
  * @param {string} forNode - type NODE_ID (Node with NODE_ID should exists)
  * @param {string} actionName - type ACTIONS_ID, UPPERCASE string
  * @param {{}} newState - Object of type Node.state
  * @returns void
  */
-
-
 NodeC.prototype.useContract = function (forNode, actionName, newState) {
-        _logs.checkErr.checkLogsForUseContract(this.id, forNode, actionName, newState);
-
+        checkErr.checkLogsForUseContract(this.id, forNode, actionName, newState);
         if (typeof newState === "object") {
                 let derivedContract = {};
-
                 derivedContract[actionName] = () => {
                         now("$" + actionName);
-                        store["#" + forNode]["state"] = setImmutableObject(store["#" + forNode]["state"], newState);
+                        store["#" + forNode]["state"] = setImmutableObject(
+                                store["#" + forNode]["state"],
+                                newState
+                        );
                         requestUpdate("#" + forNode);
                 };
+                store[this.id]["contract"] = setImmutableArray(store[this.id]["contract"], [
+                        actionName
+                ]);
 
-                store[this.id]["contract"] = setImmutableArray(store[this.id]["contract"], [actionName]);
                 this.contract = setImmutableObject(this.contract, derivedContract);
         } else {
                 this.useContractCallback(forNode, actionName, newState);
         }
 };
+
 /**
  * @param {string} actionName - type ACTIONS_ID, UPPERCASE string
  * @param {{}} newState - Object of type Node.state
  * @returns void
  */
-
-
 NodeC.prototype.useAction = function (actionName, newState) {
-        _logs.checkErr.checkLogsForUseAction(this.id, actionName, newState);
-
+        checkErr.checkLogsForUseAction(this.id, actionName, newState);
         if (typeof newState === "object") {
                 let derivedAction = {};
-
                 derivedAction[actionName] = () => {
                         now("$" + actionName);
-                        store[this.id]["state"] = setImmutableObject(store[this.id]["state"], newState);
+                        store[this.id]["state"] = setImmutableObject(
+                                store[this.id]["state"],
+                                newState
+                        );
                         requestUpdate(this.id);
                 };
+                store[this.id]["actions"] = setImmutableArray(store[this.id]["actions"], [
+                        actionName
+                ]);
 
-                store[this.id]["actions"] = setImmutableArray(store[this.id]["actions"], [actionName]);
                 this.actions = setImmutableObject(this.actions, derivedAction);
         } else if (typeof newState === "function") {
                 this.useActionCallback(actionName, newState);
         }
 };
+
 /**
  * @param {string} actionName - type ACTIONS_ID, UPPERCASE string
  * @param {function} func - function returns Object of type Node.state
  * @returns void
  */
-
-
 NodeC.prototype.useActionCallback = function (actionName, func) {
-        _logs.checkErr.checkLogsForUseActionCallback(this.id, actionName, func);
-
+        checkErr.checkLogsForUseActionCallback(this.id, actionName, func);
         let derivedAction = {};
-
         derivedAction[actionName] = async (...props) => {
                 now("$" + actionName);
                 const selfState = store[this.id]["state"];
                 const derivedState = await func(selfState, props);
-                store[this.id]["state"] = setImmutableObject(selfState, derivedState);
+                store[this.id]["state"] = setImmutableObject(
+                        selfState,
+                        derivedState
+                );
                 requestUpdate(this.id);
         };
-
-        store[this.id]["actions"] = setImmutableArray(store[this.id]["actions"], [actionName]);
+        store[this.id]["actions"] = setImmutableArray(store[this.id]["actions"], [
+                actionName
+        ]);
         this.actions = setImmutableObject(this.actions, derivedAction);
 };
+
 /**
  * @param {string} forNode - type NODE_ID (Node with NODE_ID should exists)
  * @param {string} actionName - type ACTIONS_ID, UPPERCASE string
  * @param {function} func - function returns Object of type Node.state
  * @returns void
  */
-
-
 NodeC.prototype.useContractCallback = function (forNode, actionName, func) {
-        _logs.checkErr.checkLogsForUseContractCallback(this.id, actionName, forNode, func);
-
+        checkErr.checkLogsForUseContractCallback(this.id, actionName, forNode, func);
         let derivedContract = {};
-
         derivedContract[actionName] = async (...props) => {
                 now("$" + actionName);
                 const calleeState = store["#" + forNode]["state"];
                 const derivedState = await func(calleeState, props);
-                store["#" + forNode]["state"] = setImmutableObject(calleeState, derivedState);
+                store["#" + forNode]["state"] = setImmutableObject(
+                        calleeState,
+                        derivedState
+                );
                 requestUpdate("#" + forNode);
         };
-
-        store[this.id]["contract"] = setImmutableArray(store[this.id]["contract"], [actionName]);
+        store[this.id]["contract"] = setImmutableArray(store[this.id]["contract"], [
+                actionName
+        ]);
         this.actions = setImmutableObject(this.actions, derivedContract);
 };
+
 /**
  * To view all the Nodes defined in the Application at any point of time
  *
@@ -284,8 +259,6 @@ NodeC.prototype.useContractCallback = function (forNode, actionName, func) {
  * @returns {bus} void
  *
  */
-
-
 NodeC.prototype.setProfile = function (newState) {
         bus = setImmutableObject(bus, newState);
 };
@@ -317,60 +290,58 @@ NodeC.prototype.setProfile = function (newState) {
  * @returns {[NodeC, dispatchNode]} [Rootz.NodeInstance, Rootz.dispatchNode]
  *
  */
-
-
 const createNode = function (id, Component) {
-        _logs.checkErr.checkLogsForCreateNode(arguments, id);
-
+        checkErr.checkLogsForCreateNode(arguments, id);
         const nodeId = "#" + id;
         const node = new NodeC(nodeId, Component);
+
         store[nodeId] = {
                 actions: [],
                 contract: [],
                 state: {},
                 scope: {}
-        }; // declare store variables
-
+        };
+        // declare store variables
         return [node, dispatchNode];
 };
+
 /**
  * Type Definitions for Dev only
  */
-
-
-exports.createNode = createNode;
 createNode.propTypes = {
-        id: _propTypes.default.string.isRequired,
-        Component: _propTypes.default.element.isRequired
+        id: PropTypes.string.isRequired,
+        Component: PropTypes.element.isRequired
 };
 NodeC.propTypes = {
-        id: _propTypes.default.string.isRequired,
-        Component: _propTypes.default.element.isRequired
+        id: PropTypes.string.isRequired,
+        Component: PropTypes.element.isRequired
 };
 NodeC.prototype.useContractCallback.propTypes = {
-        forNode: _propTypes.default.string.isRequired,
-        actionName: _propTypes.default.string.isRequired,
-        func: _propTypes.default.func.isRequired
+        forNode: PropTypes.string.isRequired,
+        actionName: PropTypes.string.isRequired,
+        func: PropTypes.func.isRequired
 };
 NodeC.prototype.useActionCallback.propTypes = {
-        actionName: _propTypes.default.string.isRequired,
-        func: _propTypes.default.func.isRequired
+        actionName: PropTypes.string.isRequired,
+        func: PropTypes.func.isRequired
 };
 NodeC.prototype.useAction.propTypes = {
-        actionName: _propTypes.default.string.isRequired,
-        newState: _propTypes.default.oneOfType([_propTypes.default.object, _propTypes.default.func]).isRequired
+        actionName: PropTypes.string.isRequired,
+        newState: PropTypes.oneOfType([PropTypes.object, PropTypes.func]).isRequired
 };
 NodeC.prototype.useContract.propTypes = {
-        forNode: _propTypes.default.string.isRequired,
-        actionName: _propTypes.default.string.isRequired,
-        newState: _propTypes.default.oneOfType([_propTypes.default.object, _propTypes.default.func]).isRequired
+        forNode: PropTypes.string.isRequired,
+        actionName: PropTypes.string.isRequired,
+        newState: PropTypes.oneOfType([PropTypes.object, PropTypes.func]).isRequired
 };
 NodeC.prototype.state.propTypes = {
-        state: _propTypes.default.object.isRequired
+        state: PropTypes.object.isRequired
 };
-dispatchNode.propTypes = _propTypes.default.shape({
-        id: _propTypes.default.string.isRequired,
-        actions: _propTypes.default.object.isRequired,
-        contract: _propTypes.default.object.isRequired,
-        Component: _propTypes.default.element.isRequired
+dispatchNode.propTypes = PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        actions: PropTypes.object.isRequired,
+        contract: PropTypes.object.isRequired,
+        Component: PropTypes.element.isRequired
 });
+
+export { createNode, setProfile, getProfile, getAllNodes };

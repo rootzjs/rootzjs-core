@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.checkErr = exports.logger = exports.logType = void 0;
 
-var _rootzCoreDev = require("./rootz-core-dev");
+var _rootzCore = require("./rootz-core.dev");
 
 const logType = {
         inf: "info",
@@ -95,7 +95,7 @@ const checkErr = {
                 }
         },
         checkLogsForCreateNode: (args, id) => {
-                const store = (0, _rootzCoreDev.getAllNodes)(); // if less / more arguments passed
+                const store = (0, _rootzCore.getAllNodes)(); // if less / more arguments passed
 
                 if (args.length != 2) {
                         logger(logType.err, logMap.INOA(id));
@@ -120,7 +120,7 @@ const checkErr = {
                 }
         },
         checkLogsForUseContract: (id, forNode, actionName, newState) => {
-                const store = (0, _rootzCoreDev.getAllNodes)(); // if Node already exists with the name
+                const store = (0, _rootzCore.getAllNodes)(); // if Node already exists with the name
 
                 if (Object.prototype.hasOwnProperty.call(store, forNode)) {
                         logger(logType.err, logMap.ITNI(id, forNode));
@@ -149,7 +149,7 @@ const checkErr = {
                 }
         },
         checkLogsForUseContractCallback: (id, actionName, forNode, func) => {
-                const store = (0, _rootzCoreDev.getAllNodes)();
+                const store = (0, _rootzCore.getAllNodes)();
 
                 if (Object.prototype.hasOwnProperty.call(store, forNode)) {
                         logger(logType.err, logMap.ITNI(id, forNode));

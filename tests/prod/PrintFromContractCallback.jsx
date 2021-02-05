@@ -1,10 +1,10 @@
 import React from 'react';
-import { createNode } from '../dist/rootz-core.min.js';
+import { createNode } from '../../dist/rootz-core.prod';
 
-// Test to Print a text "Hello" without state
+// Test to Print a text "Hello" through contract
 const [node, dispatchNode] =
         createNode(
-                "PrintFromAction",
+                "PrintFromContractCallback",
                 function ({
                         state,
                         actions
@@ -18,6 +18,10 @@ const [node, dispatchNode] =
                 }
         );
 node.state({ text: null });
-node.useAction("ON_CLICK", { text: "Hello" });
+node.useContractCallback(
+        "PrintFromContractCallback",
+        "ON_CLICK",
+        () => ({ text: "Hello" })
+);
 
-export const PrintFromAction = dispatchNode(node);
+export const PrintFromContractCallback = dispatchNode(node);

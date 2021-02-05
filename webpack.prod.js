@@ -4,10 +4,10 @@ const { merge } = require('webpack-merge');
 
 module.exports = merge(common, {
         mode: "production",
-        entry: './packages/rootz-core-prod.js',
+        entry: './src/rootz-core.prod.js',
         output: {
                 path: path.resolve(__dirname + '/dist'),
-                filename: "rootz-core.min.js",
+                filename: "rootz-core.prod.js",
                 libraryTarget: 'umd',   // Important
                 umdNamedDefine: true,   // Important
                 globalObject: "typeof self !== 'undefined' ? self : this"
